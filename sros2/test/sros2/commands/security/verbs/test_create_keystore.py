@@ -37,10 +37,10 @@ def keystore_dir(tmpdir_factory):
     return Path(keystore_dir)
 
 
-def test_create_keystore(keystore_dir):
-    public = keystore_dir / 'public'
-    private = keystore_dir / 'private'
-    contexts = keystore_dir / 'contexts'
+def _validate_keystore(directory):
+    public = directory / 'public'
+    private = directory / 'private'
+    contexts = directory / 'contexts'
     expected_files_public = (
         public / 'ca.cert.pem',
         public / 'permissions_ca.cert.pem',
@@ -56,7 +56,7 @@ def test_create_keystore(keystore_dir):
         contexts / 'governance.xml',
     )
 
-    assert len(list(keystore_dir.iterdir())) == 3
+    assert len(list(directory.iterdir())) == 3
     assert len(list(public.iterdir())) == len(expected_files_public)
     assert len(list(private.iterdir())) == len(expected_files_private)
     assert len(list(contexts.iterdir())) == len(expected_files_contexts)
@@ -64,16 +64,14 @@ def test_create_keystore(keystore_dir):
     assert all(x.is_file() for x in expected_files)
 
 
+def test_create_keystore(keystore_dir):
+    _validate_keystore(keystore_dir)
+
+
 def test_create_keystore_twice(keystore_dir):
     # Create the keystore
     assert cli.main(argv=['security', 'create_keystore', keystore_dir]) == 0
-    expected_files = (
-        'ca.cert.pem', 'ca.key.pem', 'governance.p7s', 'governance.xml'
-    )
-    assert len(os.listdir(keystore_dir)) == len(expected_files)
-
-    for expected_file in expected_files:
-        assert os.path.isfile(os.path.join(keystore_dir, expected_file))
+    _validate_keystore(keystore_dir)
 
 
 def test_ca_cert(keystore_dir):

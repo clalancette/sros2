@@ -16,45 +16,41 @@ import os
 
 from lxml import etree
 
-import pkg_resources
+import importlib.resources
 
 POLICY_VERSION = '0.2.0'
 
 
 def get_policy_default(name):
-    return pkg_resources.resource_filename(
-        package_or_requirement='sros2',
-        resource_name=os.path.join('policy', 'defaults', name))
+    with importlib.resources.path('sros2.policy.defaults', name) as path:
+        return str(path)
 
 
 def get_policy_schema(name):
-    return pkg_resources.resource_filename(
-        package_or_requirement='sros2',
-        resource_name=os.path.join('policy', 'schemas', name))
+    with importlib.resources.path('sros2.policy.schemas', name) as path:
+        return str(path)
 
 
 def get_policy_template(name):
-    return pkg_resources.resource_filename(
-        package_or_requirement='sros2',
-        resource_name=os.path.join('policy', 'templates', name))
+    with importlib.resources.path('sros2.policy.templates', name) as path:
+        return str(path)
 
 
 def get_transport_default(transport, name):
-    return pkg_resources.resource_filename(
-        package_or_requirement='sros2',
-        resource_name=os.path.join('policy', 'defaults', transport, name))
+    with importlib.resources.path('sros2.policy.defaults', name) as path:
+        return str(path)
 
 
 def get_transport_schema(transport, name):
-    return pkg_resources.resource_filename(
-        package_or_requirement='sros2',
-        resource_name=os.path.join('policy', 'schemas', transport, name))
+    module = 'sros2.policy.schemas.' + transport
+    with importlib.resources.path(module, name) as path:
+        return str(path)
 
 
 def get_transport_template(transport, name):
-    return pkg_resources.resource_filename(
-        package_or_requirement='sros2',
-        resource_name=os.path.join('policy', 'templates', transport, name))
+    module = 'sros2.policy.templates.' + transport
+    with importlib.resources.path(module, name) as path:
+        return str(path)
 
 
 def load_policy(policy_file_path):
